@@ -20,9 +20,21 @@ namespace pojiloy
     /// </summary>
     public partial class MainWindow : Window
     {
+       
         public MainWindow()
         {
             InitializeComponent();
+            
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            player1 ww1 = new player1();
+            ww1.Owner = this;
+            ww1.Show();
+            player2 ww2 = new player2();
+            ww2.Owner = this;
+            ww2.Show();
         }
     }
 }
