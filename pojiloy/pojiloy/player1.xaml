@@ -5,6 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pojiloy"
         mc:Ignorable="d"
-        Title="player1" Height="556.276" Width="809.527">
-    <UniformGrid Name="ugr" Margin="0,10,2,-2"/>
+        Title="player1" Height="567.913" Width="1049.261">
+    <Grid>
+        <UniformGrid Name="ugr" Width="400" Height="400" Margin="45,0,0,82" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        <UniformGrid Name="ugr1" Width="400" Height="400" Margin="589,0,0,82" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        <Label Content="player 2 " HorizontalAlignment="Left" Margin="589,484,0,0" VerticalAlignment="Top" Width="400"/>
+        <Label Content="player 1" HorizontalAlignment="Left" Margin="45,484,0,0" VerticalAlignment="Top" Width="400"/>
+        <Label x:Name="tags" Content="Label" HorizontalAlignment="Left" Margin="473,484,0,0" VerticalAlignment="Top" Width="73"/>
+    </Grid>
 </Window>

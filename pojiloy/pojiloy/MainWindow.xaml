@@ -5,10 +5,83 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pojiloy"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="ADMINKA SERVERA MUNICRAFT 1.2.5 8 800 555 35 35 CHLEN" Height="567.913" Width="1049.261" Closing="Window_Closing">
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="Black" Offset="0"/>
+            <GradientStop Color="White" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
     <Grid>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="139,133,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-
+        <UniformGrid Name="ugr" Width="400" Height="400" Margin="45,0,0,82" VerticalAlignment="Bottom" HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5">
+            <UniformGrid.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-9.217"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </UniformGrid.RenderTransform>
+        </UniformGrid>
+        <UniformGrid Name="ugr1" Width="400" Height="400" Margin="589,0,0,82" VerticalAlignment="Bottom" HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5">
+            <UniformGrid.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="3.518"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </UniformGrid.RenderTransform>
+        </UniformGrid>
+        <Label Content="player 2 " HorizontalAlignment="Left" Margin="589,484,0,0" VerticalAlignment="Top" Width="400" RenderTransformOrigin="0.5,0.5">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="3.324"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Content="player 1" HorizontalAlignment="Left" Margin="45,484,0,0" VerticalAlignment="Top" Width="400" RenderTransformOrigin="0.5,0.5">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-2.544"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label x:Name="tags" Content="Label" HorizontalAlignment="Left" Margin="473,484,0,0" VerticalAlignment="Top" Width="73" RenderTransformOrigin="0.5,0.5">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-16.78"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label x:Name="status" Content="server down" HorizontalAlignment="Left" Margin="468,348,0,0" VerticalAlignment="Top" Width="74" RenderTransformOrigin="0.5,0.5">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Button Content="pusk" HorizontalAlignment="Left" Margin="473,178,0,0" VerticalAlignment="Top" Width="37" Click="Button_Click" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="14.722"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
     </Grid>
-    
 </Window>
