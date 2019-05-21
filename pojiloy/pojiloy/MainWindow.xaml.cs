@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace pojiloy
 {
     /// <summary>
@@ -29,6 +30,15 @@ namespace pojiloy
         static TcpListener listener;
         bool isWorking = true;
         Thread myThread1;
+        bool alive = false; // будет ли работать поток для приема
+        UdpClient client;
+        const int LOCALPORT = 8001; // порт для приема сообщений
+        const int REMOTEPORT = 8001; // порт для отправки сообщений
+        const int TTL = 20;
+        const string HOST = "235.5.5.1"; // хост для групповой рассылки
+        IPAddress groupAddress; // адрес для групповой рассылки
+
+        string userName; // имя пользователя в чате
 
 
         public void Btn_Click(object sender, RoutedEventArgs e)
@@ -53,7 +63,7 @@ namespace pojiloy
             InitializeComponent();
             ugr.Rows = 10;
             ugr.Columns = 10;
-
+            groupAddress = IPAddress.Parse(HOST);
 
             //указываются размеры сетки (число ячеек * (размер кнопки в ячейки + толщина её границ))
             // ugr.Width = 10 * (40 + 4);
@@ -109,15 +119,66 @@ namespace pojiloy
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-          //  player1 ww1 = new player1();
-          //  ww1.Owner = this;
-          //  ww1.Show();
+            //  player1 ww1 = new player1();
+            //  ww1.Owner = this;
+            //  ww1.Show();
 
 
-            listener = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
-            listener.Start();
-            myThread1 = new Thread(new ThreadStart(Count1));
-            myThread1.Start();
+            //listener = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
+            //listener.Start();
+            //myThread1 = new Thread(new ThreadStart(Count1));
+            //myThread1.Start();
+            try
+            {
+                client = new UdpClient(LOCALPORT);
+                // присоединяемся к групповой рассылке
+                client.JoinMulticastGroup(groupAddress, TTL);
+
+                // запускаем задачу на прием сообщений
+                Task receiveTask = new Task(ReceiveMessages);
+                receiveTask.Start();
+
+                // отправляем первое сообщение о входе нового пользователя
+                string message = cletka.ToString();
+                byte[] data = Encoding.Unicode.GetBytes(message);
+                client.Send(data, data.Length, HOST, REMOTEPORT);
+
+              
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void ReceiveMessages()
+        {
+            alive = true;
+            try
+            {
+                while (alive)
+                {
+                    IPEndPoint remoteIp = null;
+                    byte[] data = client.Receive(ref remoteIp);
+                    string message = Encoding.Unicode.GetString(data);
+                   //  += Btn_Click;
+                    // добавляем полученное сообщение в текстовое поле
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        string time = DateTime.Now.ToShortTimeString();
+                        tags.Content = time + " " + message + "\r\n";
+                    }));
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                if (!alive)
+                    return;
+                throw;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         public void Count1()
         {
