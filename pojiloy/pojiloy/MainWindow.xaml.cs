@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace pojiloy
 {
     /// <summary>
@@ -23,28 +24,26 @@ namespace pojiloy
     /// </summary>
     public partial class MainWindow : Window
     {
-        public string jjjj = "";
-       static public int cletka = 0 ;
-        const int port = 25565;
-        static TcpListener listener;
-        bool isWorking = true;
-        Thread myThread1;
+        bool alive = false; // будет ли работать поток для приема
+        UdpClient client;
+        const int LOCALPORT = 8001; // порт для приема сообщений
+        const int REMOTEPORT = 8001; // порт для отправки сообщений
+        const int TTL = 20;
+        const string HOST = "235.5.5.1"; // хост для групповой рассылки
+        IPAddress groupAddress; // адрес для групповой рассылки
+        int cletka = 0;
+        string userName; // имя пользователя в чате
 
 
         public void Btn_Click(object sender, RoutedEventArgs e)
         {
 
-            int n = MainWindow.cletka;
-            //получение значения лежащего в Tag
-            // int n = (int)((Button)sender).Tag;
-
-            //установка фона нажатой кнопки, цвета и размера шрифта
+            int n = (int)((Button)sender).Tag;
             ((Button)sender).Background = Brushes.Red;
             ((Button)sender).Foreground = Brushes.Black;
             ((Button)sender).FontSize = 8;
             //запись в нажатую кнопку её номера
             ((Button)sender).Content = n.ToString();
-            cletka++;
         }
 
 
@@ -53,7 +52,7 @@ namespace pojiloy
             InitializeComponent();
             ugr.Rows = 10;
             ugr.Columns = 10;
-
+            groupAddress = IPAddress.Parse(HOST);
 
             //указываются размеры сетки (число ячеек * (размер кнопки в ячейки + толщина её границ))
             // ugr.Width = 10 * (40 + 4);
@@ -105,123 +104,70 @@ namespace pojiloy
                 ugr1.Children.Add(btn1);
 
             }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-          //  player1 ww1 = new player1();
-          //  ww1.Owner = this;
-          //  ww1.Show();
-
-
-            listener = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
-            listener.Start();
-            myThread1 = new Thread(new ThreadStart(Count1));
-            myThread1.Start();
-        }
-        public void Count1()
-        {
             try
             {
-                while (isWorking)
-                {
-                    Dispatcher.BeginInvoke(new Action(() => status.Foreground = Brushes.Green));
-                    Dispatcher.BeginInvoke(new Action(() => status.Content = ("server started")));
+                client = new UdpClient(8002);
+                // присоединяемся к групповой рассылке
+                client.JoinMulticastGroup(groupAddress, TTL);
 
-                    TcpClient client = listener.AcceptTcpClient();
+                // запускаем задачу на прием сообщений
+                Task receiveTask = new Task(ReceiveMessages);
+                receiveTask.Start();
 
-                    Thread clientThread = new Thread(() => Process(client));
-                    clientThread.Start();
-                }
+                // отправляем первое сообщение о входе нового пользователя
+                tags.Content = "startedddd";
+
+                
             }
-
-            catch (Exception)
-            {
-                MessageBox.Show("vse ochen ploho");
-            }
-            finally
-            {
-                if (listener != null)
-                    listener.Stop();
-            }
-        }
-        public void Process(TcpClient tcpClient)
-        {
-            TcpClient client = tcpClient;
-            NetworkStream stream = null;
-
-            try
-            {
-              
-                stream = client.GetStream();
-               
-
-
-                //цикл обработки сообщений
-                while (isWorking)
-                {
-                    byte[] data = new byte[64];
-
-                    //объект, для формирования строк
-                    StringBuilder builder = new StringBuilder();
-                    int bytes = 0;
-
-                    //до тех пор, пока в потоке есть данные
-                    do
-                    {
-                        //из потока считываются 64 байта и записываются в data
-                        bytes = stream.Read(data, 0, data.Length);
-                        //из считанных данных формируется строка
-                        builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
-                    }
-                    while (stream.DataAvailable);
-
-
-                     jjjj = builder.ToString();
-
-                    Dispatcher.BeginInvoke(new Action(() => tags.Content = jjjj));
-
-
-                    //преобразование сообщения в набор байт
-                    // data = Encoding.Unicode.GetBytes(message);
-                    //отправка сообщения обратно клиенту
-                    //stream.Write(data, 0, data.Length);
-                }
-            }
-
             catch (Exception ex)
             {
-                MessageBox.Show("danger, danger, high voltage");
-                //Console.WriteLine(ex.Message);
-                if (stream != null)
-                    stream.Close();
-                if (client != null)
-                    client.Close();
+                MessageBox.Show(ex.Message);
             }
-            finally
+        }
+        private void ReceiveMessages()
+        {
+            alive = true;
+            try
             {
-                //освобождение ресурсов при завершении сеанса
-                if (stream != null)
-                    stream.Close();
-                if (client != null)
-                    client.Close();
+                while (alive)
+                {
+                    IPEndPoint remoteIp = null;
+                    byte[] data = client.Receive(ref remoteIp);
+                    string message = Encoding.Unicode.GetString(data);
+
+                    // добавляем полученное сообщение в текстовое поле
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        tags.Content = message.ToString();
+                    }));
+                }
             }
+            catch (ObjectDisposedException)
+            {
+                if (!alive)
+                    return;
+                throw;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        // обработчик нажатия кнопки sendButton
+        
+        private void Window_Closing(object sender, EventArgs e)
+        {
+
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            listener.Stop();
+
         }
 
-        private void Cifora_TextChanged(object sender, TextChangedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
-            
-        }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            listener.Stop();
         }
-    }
+    } 
 }

@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pojiloy"
         mc:Ignorable="d"
-        Title="player2" Height="556.276" Width="809.527">
-    <UniformGrid Name="ugr" Margin="0,10,2,-2"/>
+        Title="player2" Height="450" Width="800">
+    <Grid>
+        
+    </Grid>
 </Window>
