@@ -83,5 +83,9 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
+        <TextBox x:Name="x_cord" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="y_cord" HorizontalAlignment="Left" Height="23" Margin="10,38,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="hwhw" Content="Button" HorizontalAlignment="Left" Margin="135,13,0,0" VerticalAlignment="Top" Width="74" Click="Button_Click_1"/>
+        <TextBox x:Name="jora" HorizontalAlignment="Left" Height="23" Margin="214,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="Jora_TextChanged"/>
     </Grid>
 </Window>

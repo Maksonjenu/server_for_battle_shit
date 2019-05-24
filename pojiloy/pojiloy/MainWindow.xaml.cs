@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace pojiloy
         public void Btn_Click(object sender, RoutedEventArgs e)
         {
 
-            int n = MainWindow.cletka;
+            int n = (int)((Button)sender).Tag;
             //получение значения лежащего в Tag
             // int n = (int)((Button)sender).Tag;
 
@@ -44,7 +45,7 @@ namespace pojiloy
             ((Button)sender).FontSize = 8;
             //запись в нажатую кнопку её номера
             ((Button)sender).Content = n.ToString();
-            cletka++;
+            
         }
 
 
@@ -65,7 +66,7 @@ namespace pojiloy
                 //создание кнопки
                 Button btn = new Button();
                 //запись номера кнопки
-                btn.Tag = i + 1;
+                btn.Tag = i;
                 //установка размеров кнопки
                 btn.Width = 40;
                 btn.Height = 40;
@@ -177,10 +178,10 @@ namespace pojiloy
                     while (stream.DataAvailable);
 
 
-                     jjjj = builder.ToString();
+                     jora.Text = builder.ToString();
 
                     Dispatcher.BeginInvoke(new Action(() => tags.Content = jjjj));
-
+                    
 
                     //преобразование сообщения в набор байт
                     // data = Encoding.Unicode.GetBytes(message);
@@ -191,7 +192,7 @@ namespace pojiloy
 
             catch (Exception ex)
             {
-                MessageBox.Show("danger, danger, high voltage");
+                MessageBox.Show(ex.Message);
                 //Console.WriteLine(ex.Message);
                 if (stream != null)
                     stream.Close();
@@ -222,6 +223,21 @@ namespace pojiloy
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             listener.Stop();
+        }
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            //    int i = int.Parse(y_cord.Text);
+            //    int j = int.Parse(x_cord.Text);
+            if (jora.Text != "")
+            {
+                var o = ugr.Children[(int.Parse)(jora.Text)];
+                Btn_Click((Button)o, e);
+            }
+        }
+
+        private void Jora_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            typeof(System.Windows.Controls.Primitives.ButtonBase).GetMethod("OnClick", BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(hwhw, new object[0]);
         }
     }
 }
