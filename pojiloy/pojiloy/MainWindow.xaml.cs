@@ -61,7 +61,7 @@ namespace pojiloy
             // ugr.Height = 10 * (40 + 4);
             //толщина границ сетки
             // ugr.Margin = new Thickness(-456, 10, 458, -2);
-            for (int i = 0; i < 100; i++)
+            for (int i = 1; i < 101; i++)
             {
                 //создание кнопки
                 Button btn = new Button();
@@ -87,12 +87,12 @@ namespace pojiloy
             // ugr1.Height = 10 * (40 + 4);
             //толщина границ сетки
             //  ugr1.Margin = new Thickness(2, 2, 2, 2);
-            for (int i = 0; i < 100; i++)
+            for (int i = 1; i < 101; i++)
             {
                 //создание кнопки
                 Button btn1 = new Button();
                 //запись номера кнопки
-                btn1.Tag = i + 1;
+                btn1.Tag = i;
                 //установка размеров кнопки
                 btn1.Width = 40;
                 btn1.Height = 40;
@@ -153,9 +153,9 @@ namespace pojiloy
 
             try
             {
-              
+                //получение потока для обмена сообщениями
                 stream = client.GetStream();
-               
+                // буфер для получаемых данных
 
 
                 //цикл обработки сообщений
@@ -178,22 +178,26 @@ namespace pojiloy
                     while (stream.DataAvailable);
 
 
-                     jora.Text = builder.ToString();
+                    string message = builder.ToString();
 
-                    Dispatcher.BeginInvoke(new Action(() => tags.Content = jjjj));
-                    
+                    if (message == "fkthisshtimout")
+                        break;
+
+                   
+                    Dispatcher.BeginInvoke(new Action(() => jora.Text = (message)));
+
 
                     //преобразование сообщения в набор байт
-                    // data = Encoding.Unicode.GetBytes(message);
+                 //   data = Encoding.Unicode.GetBytes(message);
                     //отправка сообщения обратно клиенту
-                    //stream.Write(data, 0, data.Length);
+                 //   stream.Write(data, 0, data.Length);
                 }
             }
 
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
-                //Console.WriteLine(ex.Message);
+                MessageBox.Show("danger, danger, high voltage");
+               
                 if (stream != null)
                     stream.Close();
                 if (client != null)
@@ -230,7 +234,7 @@ namespace pojiloy
             //    int j = int.Parse(x_cord.Text);
             if (jora.Text != "")
             {
-                var o = ugr.Children[(int.Parse)(jora.Text)];
+                var o = ugr.Children[(int.Parse)(jora.Text)-1];
                 Btn_Click((Button)o, e);
             }
         }
