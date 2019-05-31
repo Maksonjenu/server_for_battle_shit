@@ -27,7 +27,21 @@ namespace pojiloy
         public string jjjj = "";
        static public int cletka = 0 ;
         const int port = 25565;
-        static TcpListener listener;
+
+        static TcpListener lis;
+
+        TcpClient p1 = null;
+        TcpClient p2 = null;
+
+        NetworkStream p1s = null;
+        NetworkStream p2s = null;
+
+        int ind = 0;
+        NetworkStream[] players = new NetworkStream[2];
+
+        //        static TcpListener player_1;
+        //        static TcpListener player_2;
+
         bool isWorking = true;
         Thread myThread1;
 
@@ -110,16 +124,23 @@ namespace pojiloy
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-          //  player1 ww1 = new player1();
-          //  ww1.Owner = this;
-          //  ww1.Show();
+            //  player1 ww1 = new player1();
+            //  ww1.Owner = this;
+            //  ww1.Show();
 
 
-            listener = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
-            listener.Start();
+            lis = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
+            lis.Start();
+
+            //player_1 = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
+            //player_1.Start();
+            //player_2 = new TcpListener(IPAddress.Parse("127.0.0.1"), 25555);
+            //player_2.Start();
+
             myThread1 = new Thread(new ThreadStart(Count1));
             myThread1.Start();
         }
+
         public void Count1()
         {
             try
@@ -129,10 +150,28 @@ namespace pojiloy
                     Dispatcher.BeginInvoke(new Action(() => status.Foreground = Brushes.Green));
                     Dispatcher.BeginInvoke(new Action(() => status.Content = ("server started")));
 
-                    TcpClient client = listener.AcceptTcpClient();
 
-                    Thread clientThread = new Thread(() => Process(client));
-                    clientThread.Start();
+                    if (p1 == null)
+                        p1 = lis.AcceptTcpClient();
+                    else 
+                        if (p2 == null)
+                            p2 = lis.AcceptTcpClient();
+
+                    if ((p1 != null)&&(p2 != null))
+                    {
+                        p1s = p1.GetStream();
+                        p2s = p2.GetStream();
+
+                        Thread p1Thread = new Thread(() => proc(p1, p1s, p2s));
+                        p1Thread.Start();
+
+                        Thread p2Thread = new Thread(() => proc(p2, p2s, p1s));
+                        p2Thread.Start();
+
+
+                        break;
+                    }
+
                 }
             }
 
@@ -142,19 +181,138 @@ namespace pojiloy
             }
             finally
             {
-                if (listener != null)
-                    listener.Stop();
+                if (lis != null)
+                    lis.Stop();
             }
         }
+
         public void Process(TcpClient tcpClient)
         {
+
             TcpClient client = tcpClient;
             NetworkStream stream = null;
 
+
+
+            
             try
             {
                 //получение потока для обмена сообщениями
                 stream = client.GetStream();
+                // буфер для получаемых данных
+
+                players[ind] = stream;
+                ind++;
+
+                //цикл обработки сообщений
+                while (isWorking)
+                {
+                    byte[] data = new byte[64];
+
+                    //объект, для формирования строк
+                    StringBuilder builder = new StringBuilder();
+                    int bytes = 0;
+
+                    //до тех пор, пока в потоке есть данные
+                    do
+                    {
+                        //из потока считываются 64 байта и записываются в data
+                        bytes = stream.Read(data, 0, data.Length);
+                        //из считанных данных формируется строка
+                        builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+                    }
+                    while (stream.DataAvailable);
+
+
+                    string message = builder.ToString();
+
+                    //============================================================================================
+
+                    if (message == "fkthisshtimout")
+                        break;
+
+                   
+                    Dispatcher.BeginInvoke(new Action(() => jora.Text = (message)));
+
+                    //=============================================================================================
+
+
+
+                    //преобразование сообщения в набор байт
+                 //   data = Encoding.Unicode.GetBytes(message);
+                    //отправка сообщения обратно клиенту
+                 //   stream.Write(data, 0, data.Length);
+
+                for (int i = 0; i < ind; i++)
+                        if (players[i] != stream)
+                            players[i].Write(data, 0, data.Length);
+
+                }
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show("danger, danger, high voltage");
+               
+                if (stream != null)
+                    stream.Close();
+                if (client != null)
+                    client.Close();
+            }
+            finally
+            {
+                //освобождение ресурсов при завершении сеанса
+                if (stream != null)
+                    stream.Close();
+                if (client != null)
+                    client.Close();
+            }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+           // player_1.Stop();
+           // player_2.Stop();
+        }
+
+        private void Cifora_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            
+            
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+          //  player_1.Stop();
+          //  player_2.Stop();
+        }
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            //    int i = int.Parse(y_cord.Text);
+            //    int j = int.Parse(x_cord.Text);
+            if (jora.Text != "")
+            {
+                var o = ugr.Children[(int.Parse)(jora.Text)-1];
+                Btn_Click((Button)o, e);
+            }
+        }
+
+        private void Jora_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            typeof(System.Windows.Controls.Primitives.ButtonBase).GetMethod("OnClick", BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(hwhw, new object[0]);
+        }
+
+
+        public void proc(TcpClient tcpClient, NetworkStream ss, NetworkStream ts)
+        {
+
+            TcpClient client = tcpClient;
+            NetworkStream stream = ss;
+
+            try
+            {
+                //получение потока для обмена сообщениями
+                //stream = client.GetStream();
                 // буфер для получаемых данных
 
 
@@ -180,24 +338,32 @@ namespace pojiloy
 
                     string message = builder.ToString();
 
+                    //============================================================================================
+
                     if (message == "fkthisshtimout")
                         break;
 
-                   
+
                     Dispatcher.BeginInvoke(new Action(() => jora.Text = (message)));
+
+                    //=============================================================================================
+
 
 
                     //преобразование сообщения в набор байт
-                 //   data = Encoding.Unicode.GetBytes(message);
+                    //   data = Encoding.Unicode.GetBytes(message);
                     //отправка сообщения обратно клиенту
-                 //   stream.Write(data, 0, data.Length);
+                    //   stream.Write(data, 0, data.Length);
+
+                    ts.Write(data, 0, data.Length);
+
                 }
             }
 
             catch (Exception ex)
             {
                 MessageBox.Show("danger, danger, high voltage");
-               
+
                 if (stream != null)
                     stream.Close();
                 if (client != null)
@@ -213,35 +379,6 @@ namespace pojiloy
             }
         }
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            listener.Stop();
-        }
 
-        private void Cifora_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            
-            
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            listener.Stop();
-        }
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            //    int i = int.Parse(y_cord.Text);
-            //    int j = int.Parse(x_cord.Text);
-            if (jora.Text != "")
-            {
-                var o = ugr.Children[(int.Parse)(jora.Text)-1];
-                Btn_Click((Button)o, e);
-            }
-        }
-
-        private void Jora_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            typeof(System.Windows.Controls.Primitives.ButtonBase).GetMethod("OnClick", BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(hwhw, new object[0]);
-        }
     }
 }
