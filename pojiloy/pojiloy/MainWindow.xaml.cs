@@ -181,12 +181,12 @@ namespace pojiloy
             }
             finally
             {
-                if (lis != null)
-                    lis.Stop();
+               // if (lis != null)
+                 //   lis.Stop();
             }
         }
 
-        public void Process(TcpClient tcpClient)
+       /* public void Process(TcpClient tcpClient)
         {
 
             TcpClient client = tcpClient;
@@ -228,8 +228,8 @@ namespace pojiloy
 
                     //============================================================================================
 
-                    if (message == "fkthisshtimout")
-                        break;
+                //    if (message == "fkthisshtimout")
+                     //   break;
 
                    
                     Dispatcher.BeginInvoke(new Action(() => jora.Text = (message)));
@@ -244,7 +244,7 @@ namespace pojiloy
                  //   stream.Write(data, 0, data.Length);
 
                 for (int i = 0; i < ind; i++)
-                        if (players[i] != stream)
+                       // if (players[i] != stream)
                             players[i].Write(data, 0, data.Length);
 
                 }
@@ -252,7 +252,7 @@ namespace pojiloy
 
             catch (Exception ex)
             {
-                MessageBox.Show("danger, danger, high voltage");
+                MessageBox.Show(ex.Message);
                
                 if (stream != null)
                     stream.Close();
@@ -268,7 +268,7 @@ namespace pojiloy
                     client.Close();
             }
         }
-
+        */
         private void Window_Closed(object sender, EventArgs e)
         {
            // player_1.Stop();
@@ -340,8 +340,8 @@ namespace pojiloy
 
                     //============================================================================================
 
-                    if (message == "fkthisshtimout")
-                        break;
+                   // if (message == "fkthisshtimout")
+                       // break;
 
 
                     Dispatcher.BeginInvoke(new Action(() => jora.Text = (message)));
@@ -362,7 +362,7 @@ namespace pojiloy
 
             catch (Exception ex)
             {
-                MessageBox.Show("danger, danger, high voltage");
+                MessageBox.Show(ex.Message);
 
                 if (stream != null)
                     stream.Close();
